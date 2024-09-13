@@ -27,11 +27,12 @@ end)
 
 lib.callback.register('qbx_vehiclesales:server:spawnVehicle', function (source, vehicle, coords, warp)
     local vehmods = json.decode(vehicle.mods)
-    local netId, veh = qbx.spawnVehicle({model = vehicle.model, spawnSource = coords, warp = warp, props = vehmods})
+    local netId = qbx.spawnVehicle({model = vehicle.model, spawnSource = coords, warp = warp, props = vehmods})
+    local veh = NetworkGetEntityFromNetworkId(netId)
     if not veh or veh == 0 then return end
-
+    
     SetVehicleNumberPlateText(veh, vehicle.plate)
-    TriggerClientEvent('vehiclekeys:client:SetOwner', source, vehicle.plate, true)
+    TriggerClientEvent('vehiclekeys:client:SetOwner', source, vehicle.plate)
     return netId
 end)
 

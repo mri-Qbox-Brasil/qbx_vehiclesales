@@ -9,6 +9,7 @@ var app = new Vue({
         licensePlate: "",
         vehicleDescription: "",
         sellPrice: "",
+        vehicleModel: "",
         showTakeBackOption: false,
         errors: []
     },
@@ -22,16 +23,16 @@ var app = new Vue({
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
                             price: this.sellPrice,
-                            desc: this.vehicleDescription
+                            desc: this.vehicleDescription,
                         })
                     };
                     fetch(`https://${GetParentResourceName()}/sellVehicle`, requestOptions);
                     this.close();
                 } else {
-                    this.errors.push("Price must be a numeric value only");
+                    this.errors.push("Preço precisa ser apenas número.");
                 }
             } else {
-                this.errors.push("Sale price required")
+                this.errors.push("Preencha um preço de venda.")
             }
         },
         buy() {
@@ -71,6 +72,7 @@ var app = new Vue({
             this.licensePlate = "";
             this.vehicleDescription = "";
             this.sellPrice = "";
+            this.vehicleModel = "";
             this.errors = [];
         },
         hideForm() {
@@ -80,13 +82,13 @@ var app = new Vue({
     },
     computed: {
         tax() {
-            return (this.sellPrice / 100 * 19).toFixed(0);
+            return (this.sellPrice / 100 * 15).toFixed(0);
         },
         mosleys() {
-            return (this.sellPrice / 100 * 4).toFixed(0);
+            return (this.sellPrice / 100 * 5).toFixed(0);
         },
         total() {
-            return (this.sellPrice / 100 * 77).toFixed(0);
+            return (this.sellPrice / 100 * 80).toFixed(0);
         }
     }
 
@@ -107,10 +109,15 @@ function setupForm(data) {
     app.bankAccount = data.sellerData.account;
     app.phoneNumber = data.sellerData.phone;
     app.licensePlate = data.plate;
+    app.vehicleModel = data.model.charAt(0).toUpperCase() + data.model.slice(1);
 
     if (data.action === "buyVehicle") {
         app.vehicleDescription = data.vehicleData.desc;
         app.sellPrice = data.vehicleData.price;
+
+        if (app.vehicleDescription == "") {
+            app.vehicleDescription = `O vendedor não preencheu nenhuma descrição.`
+        }
     }
 }
 

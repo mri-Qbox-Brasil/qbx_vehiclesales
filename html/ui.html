@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Saira:ital,wght@1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./ui.css">
     <title>QB Occasions</title>
 </head>
@@ -12,71 +15,90 @@
             <div id="sell-contract" class="centred">
                 <div id="form-header" class="v-centred-container">
                     <object type="image/svg+xml" data="logo.svg" class="logo">
-                        Shop Logo <!-- fallback image in CSS -->
+                        Logo<!-- fallback image in CSS -->
                     </object>
                     <div>
                         <div id="biz-name" class="vertical-center">{{ bizName }}</div>
                     </div>
                 </div>
 
-                <div id="the-form" class="centred">
+                <div id="form-header-2" class="v-centred-container" v-if="mode==='sellVehicle'">
+                    <div id="biz-name-2" class="vertical-center">FORMULÁRIO DE VENDA</div>
+                </div>
+                <div id="form-header-2" class="v-centred-container" v-if="mode==='buyVehicle'">
+                    <div id="biz-name-2" class="vertical-center">FORMULÁRIO DE COMPRA</div>
+                </div>
+
+
+                <div id="the-form" class="v-centred-container">
+                    <div class="form-entry" v-if="mode==='buyVehicle'">
+                        <div id="seller-name" class="form-field" >{{ vehicleModel }}</div>
+                        <span class="form-field-summary">Modelo</span>
+                    </div>
                     <div class="form-entry">
                         <div id="seller-name" class="form-field" >{{ sellerName }}</div>
-                        <span class="form-field-summary">(Name of Seller)</span>
+                        <span class="form-field-summary">Nome do Vendedor</span>
                     </div>
                     <div class="form-entry">
                         <div id="seller-banknr" class="form-field">{{ bankAccount }}</div>
-                        <span class="form-field-summary">(Bank Account Number)</span>
+                        <span class="form-field-summary">Número da Conta Bancária</span>
                     </div>
                     <div class="form-entry">
                         <div id="seller-telnr" class="form-field">{{ phoneNumber }}</div>
-                        <span class="form-field-summary">(Telephone Number)</span>
+                        <span class="form-field-summary">Número do Telefone</span>
                     </div>
                     <div class="form-entry">
                         <div id="vehicle-plate" class="form-field">{{ licensePlate }}</div>
-                        <span class="form-field-summary">(Vehicle License Plate)</span>
+                        <span class="form-field-summary">Placa do Veículo</span>
                     </div>
                     <div class="form-entry">
                         <div class="form-field" v-if="mode==='sellVehicle'">
                             <input type="text"
                                 class="vehicle-description"
                                 maxlength="500"
-                                placeholder="Enter Your Vehicle Description Here, Maximum 500 Characters"
+                                placeholder="Entre a descrição do veículo (no máximo, 500 caracteres)."
                                 v-model="vehicleDescription">
                         </div>
-                        <span class="form-field-summary"v-if="mode==='sellVehicle'">(Vehicle Description. max 500)</span>
+                        <span class="form-field-summary" v-if="mode==='sellVehicle'">Descrição do Veículo <i>(no máximo, 500 caracteres)</i></span>
                         <div id="vehicle-plate" class="form-field" v-if="mode==='buyVehicle'">{{ vehicleDescription }}</div>
+                        <span class="form-field-summary" v-if="mode==='buyVehicle'">Descrição do Veículo preenchida pelo Vendedor</span>
                     </div>
 
-                    <div class="form-entry" v-if="mode==='sellVehicle'">
-                        <table class="pricing-table centred-h">
-                            <tr><td><span class="table-field-heading">Selling Price:</span>
-                                <input type="text"
-                                    class="vehicle-sell-price"
-                                    placeholder="Enter Vehicle Price Here"
-                                    v-model="sellPrice">
-                            </td></tr>
-                            <tr><td><span class="table-field-heading">Tax:</span><span id="tax"> &dollar; {{ tax }}</span></td></tr>
-                            <tr><td><span class="table-field-heading">Mosely's Cut:</span><span id="mosley-cut"> &dollar; {{ mosleys }}</span></td></tr>
-                            <tr><td><span class="table-field-heading">Total Yield:</span><span id="total-money"> &dollar; {{ total }}</span></td></tr>
-                        </table>
+                    <div class="form-entry">
+                        <div class="half" v-if="mode==='sellVehicle'" style="float: left;">
+                            <table class="pricing-table">
+                                <tr><td><span class="table-field-heading">(+) Preço de Venda:</span> R$
+                                    <input type="text"
+                                        class="vehicle-sell-price"
+                                        placeholder="Valor do veículo"
+                                        v-model="sellPrice">
+                                </td></tr>
+                                <tr><td><span class="table-field-heading">(-) Taxa de Serviço:</span><span id="tax"> R$ {{ tax }}</span></td></tr>
+                                <tr><td><span class="table-field-heading">(-) Taxas Administrativas:</span><span id="mosley-cut"> R$ {{ mosleys }}</span></td></tr>
+                                <tr><td><span class="table-field-heading">(=) Total Líquido:</span><span id="total-money"> R$ {{ total }}</span></td></tr>
+                            </table>
+                        </div>
+
+                        <div class="half" style="float: left;" v-if="mode==='buyVehicle'">
+                            <table class="pricing-table">
+                                <tr><td><span class="table-field-heading">Preço do Veículo:</span></td>
+                                <td><span id="tax-2">R$ {{ sellPrice }}</span></td></tr>
+                            </table>
+                        </div>
+
+                        <div class="half v-centred-container" style="float: right;">
+                            <div class="btn" id="sell-vehicle" v-if="mode==='sellVehicle'" @click="sell(sellPrice)"><p>Vender</p></div>
+                            <div class="btn" id="buy-vehicle" v-if="mode==='buyVehicle'" @click="buy()"><p>Comprar</p></div>
+                            <div class="btn" id="buy-vehicle-back" v-if="showTakeBackOption" @click="takeBack()"><p>Cancelar a Venda</p></div>
+
+                            <div v-if="errors.length" class="errors">
+                                <div v-for="error in errors">{{ error }}</div>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div class="form-entry" v-if="mode==='buyVehicle'">
-                        <table class="pricing-table centred-h">
-                            <tr><td><span class="table-field-heading">Vehicle Price:</span><span id="tax"> &dollar; {{ sellPrice }}</span></td></tr>
-                        </table>
-                    </div>
 
-                    <div class="btn" id="sell-vehicle" v-if="mode==='sellVehicle'" @click="sell(sellPrice)"><p>Sell</p></div>
-                    <div class="btn" id="buy-vehicle" v-if="mode==='buyVehicle'" @click="buy()"><p>Buy</p></div>
-                    <div class="btn" id="buy-vehicle-back" v-if="showTakeBackOption" @click="takeBack()"><p>Take Back</p></div>
-
-                    <div v-if="errors.length" class="errors centred-h">
-                        <ul>
-                            <li v-for="error in errors">{{ error }}</li>
-                        </ul>
-                    </div>
                 </div>
 
             </div>

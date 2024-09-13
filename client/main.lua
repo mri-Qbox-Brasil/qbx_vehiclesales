@@ -32,7 +32,7 @@ local function spawnOccasionsVehicles(vehicles)
                 SetEntityInvincible(occasionVehicles[zone][i].car,true)
                 SetEntityHeading(occasionVehicles[zone][i].car, oSlot[i].w)
                 SetVehicleDoorsLocked(occasionVehicles[zone][i].car, 3)
-                SetVehicleNumberPlateText(occasionVehicles[zone][i].car, occasionVehicles[zone][i].oid)
+                SetVehicleNumberPlateText(occasionVehicles[zone][i].car, occasionVehicles[zone][i].plate)
                 FreezeEntityPosition(occasionVehicles[zone][i].car,true)
                 if config.useTarget then
                     if not entityZones then entityZones = {} end
@@ -99,8 +99,9 @@ local function openBuyContract(sellerData, vehicleData)
         },
         vehicleData = {
             desc = vehicleData.desc,
-            price = vehicleData.price
+            price = vehicleData.price,
         },
+        model = vehicleData.model,
         plate = vehicleData.plate
     })
 end
