@@ -209,19 +209,18 @@ RegisterNetEvent('qb-occasions:client:BuyFinished', function(vehData)
     currentVehicle = {}
 end)
 
-AddEventHandler('qb-occasions:client:SellBackCar', function()
+AddEventHandler('qb-occasions:client:SellBackCar', function() 
     if cache.vehicle then
         local vehicleData = {}
         vehicleData.model = GetEntityModel(cache.vehicle)
         vehicleData.plate = GetVehicleNumberPlateText(cache.vehicle)
-        local owned, balance = lib.callback.await('qbx_vehiclesales:server:checkVehicleOwner', false, vehicleData.plate)
+
+        -- Verifica se o jogador é o proprietário do veículo
+        local owned = lib.callback.await('qbx_vehiclesales:server:checkVehicleOwner', false, vehicleData.plate)
+
         if owned then
-            if balance < 1 then
-                TriggerServerEvent('qb-occasions:server:sellVehicleBack', vehicleData)
-                DeleteVehicle(cache.vehicle)
-            else
-                exports.qbx_core:Notify(locale('error.finish_payments'), 'error', 3500)
-            end
+            TriggerServerEvent('qb-occasions:server:sellVehicleBack', vehicleData)
+            DeleteVehicle(cache.vehicle)
         else
             exports.qbx_core:Notify(locale('error.not_your_vehicle'), 'error', 3500)
         end
