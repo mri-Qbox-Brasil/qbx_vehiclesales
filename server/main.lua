@@ -1,5 +1,10 @@
 local VEHICLES = exports.qbx_core:GetVehiclesByName()
 
+-- Keeps the cached list in sync with vehicles added/edited at runtime (qbx_core mri/)
+AddEventHandler('qbx_core:server:onVehicleUpdate', function(model, vehicle)
+    VEHICLES[model] = vehicle
+end)
+
 local function generateOID()
     local num = math.random(1, 10) .. math.random(111, 999)
     return 'OC' .. num
